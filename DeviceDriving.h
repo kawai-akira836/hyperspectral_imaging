@@ -1,36 +1,17 @@
 class SerialComm {
 protected:
-  DCB dcb;
+  HANDLE hComPort;          //COMポートのハンドル
 public:
-  void setDCBlength
-  void setBaudRate
-  void setByteSize
-  void setfBinary
-  void setfParity
-  void setStopBits
-  void setfOutxCtsFlow
-  void setfOutxDsrFlow
-  void setfDtrControl
-  void setfRtsControl
-
-  void setfOutX
-  void setfInX
-  void setfTXContinueOnXoff
-  void setXonLim
-  void setXoffLim
-  void setXonChar
-  void setXoffChar
-
-  void setfNull
-  void setfAbortOnError
-  void setfErrorChar
-  void setErrorChar
-  void setEofChar
-  void setEvtChar
-
+  void
   void open();
   void setBuffer();
   void initBuffer();
+  void writeDCB(*dcb);
+  void setTimeouts();
+  void close();
 
+  void sendData(string data);
+
+  HANDLE gethComPort();
   SerialComm();
-}
+};
