@@ -1,17 +1,25 @@
 // ConsoleApplication2.cpp : このファイルには 'main' 関数が含まれています。プログラム実行の開始と終了がそこで行われます。
 //
 
-#include "pch.h"
+//#include "pch.h"
+#include "DeviceDriving.h"
 #include <string>//良く知らん
 #include <stdio.h>//printfなどの標準入出力関数を使うためのヘッダファイル
 #include <windows.h>//Wi32APIを使うためのヘッダファイル
 #include <tchar.h>//_T()使うのに要る
 #include <iostream>
+using namespace std;
+
 
 int main()
 {
+	SerialComm stage;
+	if (stage.open()) { return 0; }
+	if (stage.setBuffer()) { return 0; }
+	if (stage.initBuffer()) { return 0; }
+
 	DCB dcb;//構成情報を記録する構造体の生成
-	GetCommState(hComPort, &dcb);//現在の設定値を読み込み
+	GetCommState(stage.gethComPort(), &dcb);//現在の設定値を読み込み
 	dcb.DCBlength = sizeof(DCB);//DCBのサイズ
 	dcb.BaudRate = 9600;//ボーレート:9600bps
 	dcb.ByteSize = 8;//データサイズ:8bit
@@ -38,12 +46,9 @@ int main()
 	dcb.EofChar = 0x03;// データ終了通知キャラクタ:一般に0x03(ETX)がよく使われます。
 	dcb.EvtChar = 0x02;// イベント通知キャラクタ:一般に0x02(STX)がよく使われます
 
-	SerialComm stage;
-	stage.open();
-  stage.setBuffer();
-  stage.initBuffer();
-  stage.writeDCB(*dcb);
-  stage.setTimeouts();
+
+	if (stage.writeDCB(&dcb)) { return 0; }
+	if (stage.setTimeouts()) { return 0; }
 
 
 	int n = 0;
@@ -51,7 +56,7 @@ int main()
 		stage.sendData("T:M");
 
 		if (n == 0) {
-			Sleep(10000);
+			Sleep(1000);
 		}
 		else {
 			Sleep(1000);
